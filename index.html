@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ぽちっと日記</title>
+<meta name="theme-color" content="#f6f1e9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ぽちっと日記">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f1e9; --card:#fffdf9; --ink:#3a322a; --sub:#8a7f73; --line:#e8dfd2;
+  --accent:#d9704f; --accent-soft:#fbe4da; --accent-ink:#9c4227; --ok:#5b8c5a;
+  --shadow:0 1px 2px rgba(60,40,20,.06),0 4px 14px rgba(60,40,20,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#1f1b17;--card:#2a2520;--ink:#efe7dc;--sub:#a99d8f;--line:#3c352d;
+    --accent:#e88a6a;--accent-soft:#4a2f25;--accent-ink:#ffc7b1;--shadow:none}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:"Zen Maru Gothic",system-ui,-apple-system,"Hiragino Maru Gothic ProN",sans-serif;
+  font-size:16px;line-height:1.5;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+
+/* header */
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding-top:env(safe-area-inset-top);
+  border-bottom:1px solid var(--line)}
+.hbar{display:flex;align-items:center;gap:6px;padding:10px 0}
+.hbar .title{flex:1;text-align:center;position:relative}
+.hbar .date{font-weight:700;font-size:18px;display:block}
+.hbar .rel{font-size:12px;color:var(--sub);display:block;min-height:18px}
+.hbar input[type=date]{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer}
+.navbtn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:18px}
+.todaybtn{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--accent);color:var(--accent-ink);background:var(--accent-soft)}
+.status{font-size:11px;color:var(--sub);text-align:right;padding:0 0 6px;min-height:16px}
+.status.ok{color:var(--ok)}
+
+/* cards */
+.card{background:var(--card);border-radius:16px;padding:12px 14px 14px;margin:12px 0;box-shadow:var(--shadow);border:1px solid var(--line)}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.card-h h3{margin:0;font-size:15px;font-weight:700}
+.clear{border:none;background:none;color:var(--sub);font-size:12px;padding:2px 6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:8px 13px;font-size:15px;
+  transition:transform .08s,background .15s,border-color .15s}
+.chip:active{transform:scale(.95)}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+textarea,input[type=text]{width:100%;font:inherit;color:inherit;background:var(--bg);border:1.5px solid var(--line);
+  border-radius:12px;padding:10px 12px;resize:none;outline:none}
+textarea:focus,input[type=text]:focus{border-color:var(--accent)}
+.section-t{font-size:13px;color:var(--sub);margin:22px 4px 6px;font-weight:700;letter-spacing:.05em}
+
+/* lookback */
+.lb{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:12px 14px;margin:10px 0;box-shadow:var(--shadow)}
+.lb.empty{opacity:.55;box-shadow:none}
+.lb-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.lb-h b{font-size:16px}
+.lb-h span{font-size:12px;color:var(--sub)}
+.sum{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+.tag i{font-style:normal;color:var(--sub);font-size:11px;margin-right:4px}
+.txt{font-size:13px;margin-top:6px;color:var(--ink);white-space:pre-wrap;word-break:break-word}
+.txt i{font-style:normal;color:var(--sub);font-size:11px;margin-right:6px}
+.peek{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;scroll-snap-type:x mandatory}
+.peek .lb{min-width:78%;scroll-snap-align:start;margin:0}
+
+/* calendar */
+.calbar{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px}
+.calbar b{font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wd{text-align:center;font-size:11px;color:var(--sub);padding:4px 0}
+.wd:first-child{color:#c45a5a}.wd:last-child{color:#5a7ac4}
+.day{aspect-ratio:1/1.15;border-radius:12px;border:1px solid transparent;background:var(--card);display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;padding:4px 0;font-size:12px}
+.day .em{font-size:20px;line-height:1.3;margin-top:2px}
+.day .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:9px}
+.day.today{border-color:var(--accent)}
+.day.sel{background:var(--accent-soft)}
+.day.blank{background:transparent}
+select{font:inherit;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:6px 8px}
+
+/* settings */
+.item-row{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 10px 10px 14px;margin:8px 0}
+.item-row .nm{flex:1;min-width:0}
+.item-row .nm b{display:block;font-size:15px}
+.item-row .nm small{display:block;color:var(--sub);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:14px;flex:none}
+.ib:disabled{opacity:.3}
+.btn{display:block;width:100%;padding:13px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);font-weight:700;margin:10px 0}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.danger{color:#c0392b;border-color:#e8b4ad}
+.note{font-size:12px;color:var(--sub);margin:8px 4px;line-height:1.7}
+
+/* tabbar */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs .in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav.tabs button{border:none;background:none;padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:11px;color:var(--sub)}
+nav.tabs button .ic{font-size:21px;filter:grayscale(1);opacity:.6}
+nav.tabs button.on{color:var(--accent-ink);font-weight:700}
+nav.tabs button.on .ic{filter:none;opacity:1}
+
+/* modal */
+.mask{position:fixed;inset:0;background:rgba(20,12,5,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));
+  max-height:88vh;overflow:auto;animation:up .2s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.sheet h2{margin:0 0 12px;font-size:18px}
+.sheet label{display:block;font-size:13px;color:var(--sub);margin:12px 0 6px;font-weight:700}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;padding:9px 6px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);font-size:13px}
+.seg button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink);font-weight:700}
+.row2{display:flex;gap:8px}.row2 .btn{flex:1}
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:8px 16px;border-radius:999px;font-size:13px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+.loading{text-align:center;color:var(--sub);padding:60px 0}
+.banner{display:flex;align-items:center;gap:10px;background:var(--accent-soft);color:var(--accent-ink);border-radius:14px;padding:10px 12px;margin:12px 0 4px;font-size:13px}
+.banner span{flex:1}
+.banner button{border:none;background:var(--accent);color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;flex:none}
+.steps{font-size:13px;line-height:1.8;margin:6px 0 0;padding-left:1.3em;color:var(--ink)}
+
+/* scale slider (compact) */
+.card.sc-card{padding:8px 12px 6px;margin:8px 0}
+.scale{min-width:0}
+.sc-head{display:flex;align-items:center;gap:6px;min-height:22px}
+.sc-name{font-weight:700;font-size:14px;flex:none}
+.sc-val{display:flex;align-items:center;gap:5px;font-size:13px;min-width:0;flex:1;justify-content:flex-end;white-space:nowrap;overflow:hidden}
+.sc-val b{font-weight:500;overflow:hidden;text-overflow:ellipsis}
+.scale.unset .sc-val b{color:var(--sub);font-size:12px}
+.sc-dot{width:10px;height:10px;border-radius:50%;flex:none}
+.scale.unset .sc-dot{display:none}
+.clear.x{width:22px;height:22px;padding:0;border-radius:50%;font-size:12px;line-height:1;flex:none;background:var(--bg);border:1px solid var(--line)}
+.scale.unset .clear.x{visibility:hidden}
+.sc-row{display:flex;align-items:center;gap:6px}
+.sc-end{font-size:15px;flex:none;width:20px;text-align:center}
+.sc-track{position:relative;flex:1;height:28px;touch-action:none;cursor:pointer;outline:none}
+.sc-bar{position:absolute;left:0;right:0;top:50%;height:10px;margin-top:-5px;border-radius:999px;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
+.scale.unset .sc-bar{opacity:.4}
+.sc-thumb{position:absolute;top:50%;width:22px;height:22px;border-radius:50%;transform:translate(-50%,-50%);
+  border:3px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.3)}
+.scale.unset .sc-thumb{display:none}
+.sc-track:focus-visible .sc-bar{box-shadow:0 0 0 3px var(--accent-soft)}
+.grp-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:2px}
+.grp-h h3{margin:0;font-size:14px}
+.grp-h small{font-size:11px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grp{display:grid;gap:4px 12px}
+.grp .sc-name{font-size:12px;color:var(--sub);font-weight:700}
+.grp .sc-head{gap:3px}
+.grp .sc-val{font-size:11.5px;gap:0}
+.grp .sc-dot{display:none}
+.grp .clear.x{width:18px;height:18px;font-size:10px}
+#f-prev{height:12px;border-radius:999px}
+.tag .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:0}
+.day .cdot{width:20px;height:20px;border-radius:50%;margin-top:4px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
+.sc-edit{display:grid;grid-template-columns:auto 44px 1fr;gap:8px;align-items:center}
+.sc-edit span{font-size:12px;color:var(--sub)}
+.sc-edit input[type=color]{width:44px;height:40px;border:1.5px solid var(--line);border-radius:10px;padding:2px;background:var(--bg)}
+.seg button{flex:1 1 40%}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="hbar">
+    <button class="navbtn" id="prev" aria-label="前の日">‹</button>
+    <div class="title">
+      <span class="date" id="hdate"></span>
+      <span class="rel" id="hrel"></span>
+      <input type="date" id="picker" aria-label="日付を選ぶ">
+    </div>
+    <button class="navbtn" id="next" aria-label="次の日">›</button>
+  </div>
+  <div class="status" id="status"></div>
+</div></header>
+
+<main class="wrap" id="view"><div class="loading">読み込み中…</div></main>
+
+<nav class="tabs"><div class="in">
+  <button data-tab="record"><span class="ic">✏️</span>記録</button>
+  <button data-tab="look"><span class="ic">🕰️</span>あの日</button>
+  <button data-tab="cal"><span class="ic">📅</span>カレンダー</button>
+  <button data-tab="items"><span class="ic">⚙️</span>項目</button>
+</div></nav>
+
+<div id="modal"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- defaults ---------- */
+const WEATHER = {type:'scale', left:{label:'🌀 荒天', color:'#3f78d1'}, mid:{label:'⛅ くもり', color:'#a8a29e'}, right:{label:'☀️ 晴天', color:'#f08a2c'}};
+const TEMP = {type:'scale', left:{label:'🥶 寒い', color:'#2f7fd0'}, mid:{label:'😊 快適', color:'#a8a29e'}, right:{label:'🥵 暑い', color:'#e04a35'}};
+const SETTINGS_VERSION = 2;
+const DEFAULT_ITEMS = [
+  {id:'weather_am', name:'天気（午前）', ...WEATHER},
+  {id:'weather_pm', name:'天気（午後）', ...WEATHER},
+  {id:'temp_morning', name:'気温（朝）', ...TEMP},
+  {id:'temp_noon', name:'気温（昼）', ...TEMP},
+  {id:'temp_night', name:'気温（夜）', ...TEMP},
+  {id:'mood', name:'気分', type:'scale', left:{label:'😞 最悪', color:'#6a6fb0'}, mid:{label:'😐 ふつう', color:'#a8a29e'}, right:{label:'😄 最高', color:'#f2b02e'}},
+  {id:'health', name:'体調', type:'scale', left:{label:'🤒 不調', color:'#9b6bb8'}, mid:{label:'😐 ふつう', color:'#a8a29e'}, right:{label:'💪 絶好調', color:'#3fae6a'}},
+  {id:'family', name:'家族の調子', type:'scale', left:{label:'😟 心配', color:'#6a6fb0'}, mid:{label:'🙂 ふつう', color:'#a8a29e'}, right:{label:'😊 元気', color:'#f29a3a'}},
+  {id:'work', name:'仕事の状況', type:'scale', left:{label:'🏖️ ゆとり', color:'#3aa8a0'}, mid:{label:'🙂 ふつう', color:'#a8a29e'}, right:{label:'🔥 大変', color:'#e04a35'}},
+  {id:'exercise', name:'運動の程度', type:'scale', left:{label:'🛋️ なし', color:'#8c9bb0'}, mid:{label:'🚶 少し', color:'#a8a29e'}, right:{label:'🏃 しっかり', color:'#2fae5e'}},
+  {id:'events', name:'今日の出来事', type:'text'},
+  {id:'bought', name:'買ったもの', type:'text'},
+  {id:'videos', name:'見た動画', type:'text'},
+  {id:'news', name:'世の中の出来事', type:'text'},
+];
+const LOOKBACKS = [
+  {l:'1週間前', d:-7}, {l:'1ヶ月前', m:-1}, {l:'1年前', y:-1}, {l:'2年前', y:-2},
+  {l:'3年前', y:-3}, {l:'5年前', y:-5}, {l:'10年前', y:-10},
+];
+const TYPE_LABEL = {scale:'スライダー', choice:'選択（1つ）', multi:'選択（複数OK）', text:'自由記載'};
+
+/* ---------- utils ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad = n => String(n).padStart(2,'0');
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); };
+const WD = '日月火水木金土';
+const fmt = (s, yr=true) => { const d = parse(s); return `${yr ? d.getFullYear()+'年' : ''}${d.getMonth()+1}月${d.getDate()}日(${WD[d.getDay()]})`; };
+function shift(s, {y=0, m=0, d=0}) {
+  const t = parse(s);
+  if (d) { t.setDate(t.getDate() + d); return ymd(t); }
+  const ty = t.getFullYear() + y, tm = t.getMonth() + m;
+  const last = new Date(ty, tm + 1, 0).getDate();
+  return ymd(new Date(ty, tm, Math.min(t.getDate(), last)));
+}
+const today = () => ymd(new Date());
+function relLabel(s) {
+  const diff = Math.round((parse(today()) - parse(s)) / 86400000);
+  if (diff === 0) return '今日'; if (diff === 1) return '昨日'; if (diff === -1) return '明日';
+  return diff > 0 ? `${diff}日前` : `${-diff}日後`;
+}
+const emojiOf = opt => { const i = String(opt).indexOf(' '); return i > 0 ? opt.slice(0, i) : String(opt).slice(0, 2); };
+const clone = o => JSON.parse(JSON.stringify(o));
+
+/* scale helpers */
+const safeColor = (c, d) => /^#[0-9a-fA-F]{6}$/.test(c || '') ? c : d;
+const hex2rgb = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const rgb2hex = a => '#' + a.map(x => Math.round(x).toString(16).padStart(2, '0')).join('');
+const stops = it => [safeColor(it.left && it.left.color, '#3f78d1'), safeColor(it.mid && it.mid.color, '#a8a29e'), safeColor(it.right && it.right.color, '#f08a2c')];
+const gradient = it => { const [l, m, r] = stops(it); return `linear-gradient(90deg,${l},${m},${r})`; };
+function colorAt(it, v) {
+  const [l, m, r] = stops(it).map(hex2rgb), t = v / 100;
+  const [a, b, u] = t <= .5 ? [l, m, t * 2] : [m, r, (t - .5) * 2];
+  return rgb2hex(a.map((x, i) => x + (b[i] - x) * u));
+}
+const splitLabel = l => { l = String(l || ''); const i = l.indexOf(' '); return i > 0 ? [l.slice(0, i), l.slice(i + 1)] : ['', l]; };
+function scaleWord(it, v) {
+  const L = (it.left && it.left.label) || '左', R = (it.right && it.right.label) || '右', M = (it.mid && it.mid.label) || 'ふつう';
+  const yaya = s => { const [e, w] = splitLabel(s); return (e ? e + ' ' : '') + 'やや' + w; };
+  if (v < 20) return L; if (v < 40) return yaya(L); if (v <= 60) return M; if (v <= 80) return yaya(R); return R;
+}
+const isNum = v => typeof v === 'number' && isFinite(v);
+function scaleHTML(it, v, opts = {}) {
+  const has = isNum(v);
+  const ends = opts.ends !== false;
+  const [le] = splitLabel(it.left && it.left.label), [re] = splitLabel(it.right && it.right.label);
+  return `<div class="scale${has ? '' : ' unset'}" data-scale="${esc(it.id)}">
+    <div class="sc-head"><span class="sc-name">${esc(opts.label || it.name)}</span>
+      <span class="sc-val"><span class="sc-dot" style="background:${has ? colorAt(it, v) : 'transparent'}"></span><b>${has ? esc(scaleWord(it, v)) : '未入力'}</b></span>
+      <button class="clear x" data-clear="${esc(it.id)}" aria-label="クリア">×</button></div>
+    <div class="sc-row">${ends ? `<span class="sc-end">${esc(le)}</span>` : ''}
+      <div class="sc-track" role="slider" tabindex="0" aria-label="${esc(it.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${has ? v : 50}">
+        <div class="sc-bar" style="background:${gradient(it)}"></div>
+        <div class="sc-thumb" style="left:${has ? v : 50}%;background:${has ? colorAt(it, v) : '#fff'}"></div></div>
+      ${ends ? `<span class="sc-end">${esc(re)}</span>` : ''}</div></div>`;
+}
+function updateScaleUI(wrap, it, v) {
+  const has = isNum(v);
+  wrap.classList.toggle('unset', !has);
+  wrap.querySelector('.sc-dot').style.background = has ? colorAt(it, v) : 'transparent';
+  wrap.querySelector('.sc-val b').textContent = has ? scaleWord(it, v) : '未入力';
+  const th = wrap.querySelector('.sc-thumb');
+  th.style.left = (has ? v : 50) + '%'; th.style.background = has ? colorAt(it, v) : '#fff';
+  wrap.querySelector('.sc-track').setAttribute('aria-valuenow', has ? v : 50);
+}
+/* "天気（午前）" + "天気（午後）" side by side → one card */
+const groupOf = it => { const m = it.type === 'scale' && /^(.+?)[（(](.+)[）)]$/.exec(it.name || ''); return m ? {g: m[1].trim(), sub: m[2].trim()} : null; };
+const isEmptyVal = v => v == null || v === '' || (Array.isArray(v) && !v.length);
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 1800); }
+function setStatus(msg, ok) { const s = $('#status'); s.textContent = msg; s.className = 'status' + (ok ? ' ok' : ''); }
+
+/* ---------- storage: IndexedDB on this phone (localStorage fallback) ---------- */
+let idb = null;
+function openIDB() {
+  return new Promise((res, rej) => {
+    if (!('indexedDB' in window)) return rej(new Error('no indexedDB'));
+    const rq = indexedDB.open('pochi-diary', 1);
+    rq.onupgradeneeded = () => {
+      const d = rq.result;
+      if (!d.objectStoreNames.contains('entries')) d.createObjectStore('entries', {keyPath: 'date'});
+      if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv');
+    };
+    rq.onsuccess = () => { const d = rq.result; d.onversionchange = () => d.close(); res(d); };
+    rq.onerror = () => rej(rq.error);
+    rq.onblocked = () => toast('ほかのタブで日記が開いています。閉じてください');
+    setTimeout(() => rej(new Error('timeout')), 8000);
+  });
+}
+function tx(name, mode, fn) {
+  return new Promise((res, rej) => {
+    const t = idb.transaction(name, mode), s = t.objectStore(name);
+    let out; const rq = fn(s);
+    if (rq) rq.onsuccess = () => { out = rq.result; };
+    t.oncomplete = () => res(out);
+    t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+  });
+}
+const LS = 'pochi-diary-local';
+const lsGet = () => { try { return JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { return {}; } };
+const lsSet = o => { try { localStorage.setItem(LS, JSON.stringify(o)); } catch (e) {} };
+const store = {
+  async getKV(k) { if (idb) return tx('kv', 'readonly', s => s.get(k)); return lsGet()['kv:' + k]; },
+  async setKV(k, v) { if (idb) return tx('kv', 'readwrite', s => s.put(v, k)); const o = lsGet(); o['kv:' + k] = v; lsSet(o); },
+  getSettings() { return this.getKV('settings'); },
+  saveSettings(obj) { return this.setKV('settings', obj); },
+  async getEntry(date) {
+    if (idb) return (await tx('entries', 'readonly', s => s.get(date))) || null;
+    return (lsGet().entries || {})[date] || null;
+  },
+  async saveEntry(date, obj) {
+    if (idb) return tx('entries', 'readwrite', s => obj ? s.put(obj) : s.delete(date));
+    const o = lsGet(); o.entries = o.entries || {}; if (obj) o.entries[date] = obj; else delete o.entries[date]; lsSet(o);
+  },
+  async range(from, to) {
+    if (idb) return (await tx('entries', 'readonly', s => s.getAll(IDBKeyRange.bound(from, to)))) || [];
+    return Object.values(lsGet().entries || {}).filter(e => e.date >= from && e.date <= to);
+  },
+  async all() {
+    if (idb) return (await tx('entries', 'readonly', s => s.getAll())) || [];
+    return Object.values(lsGet().entries || {});
+  },
+  async putMany(list, clearFirst) {
+    if (idb) return tx('entries', 'readwrite', s => { if (clearFirst) s.clear(); list.forEach(e => s.put(e)); });
+    const o = lsGet(); o.entries = clearFirst ? {} : (o.entries || {}); list.forEach(e => { o.entries[e.date] = e; }); lsSet(o);
+  },
+};
+
+/* ---------- state ---------- */
+const state = {
+  ready: false, tab: 'record', date: today(), items: clone(DEFAULT_ITEMS),
+  entry: null, cache: {}, retired: [], count: 0, lastBackup: null, calMonth: today().slice(0, 7), calItem: 'mood',
+};
+async function getEntry(date) {
+  if (date in state.cache) return state.cache[date];
+  try { const e = await store.getEntry(date); state.cache[date] = e; return e; }
+  catch (e) { return null; }
+}
+
+/* saving */
+let saveTimer = null, pending = null;
+function scheduleSave(delay) {
+  pending = state.date;
+  clearTimeout(saveTimer);
+  setStatus('保存中…');
+  saveTimer = setTimeout(flush, delay);
+}
+function flush() {
+  clearTimeout(saveTimer);
+  if (!pending) return;
+  const date = pending; pending = null;
+  const e = state.cache[date];
+  const empty = !e || Object.values(e.values || {}).every(isEmptyVal);
+  const body = empty ? null : clone(e);
+  if (body) body.updatedAt = new Date().toISOString();
+  if (empty) state.cache[date] = null;
+  if (body && !body.createdAt) { body.createdAt = body.updatedAt; e.createdAt = body.updatedAt; state.count++; }
+  store.saveEntry(date, body).then(() => {
+    setStatus('✓ 保存しました', true);
+  }).catch(err => {
+    setStatus('保存できませんでした');
+    toast(err && err.code === 'quota_exceeded' ? '保存容量がいっぱいです' : '保存に失敗しました。もう一度お試しください');
+  });
+}
+function setValue(itemId, value) {
+  const it = state.items.find(i => i.id === itemId);
+  let e = state.cache[state.date];
+  if (!e) e = state.cache[state.date] = {date: state.date, values: {}, names: {}};
+  e.values = e.values || {}; e.names = e.names || {};
+  if (isEmptyVal(value)) delete e.values[itemId]; else e.values[itemId] = value;
+  if (it) e.names[itemId] = it.name;
+  state.entry = e;
+}
+
+/* ---------- summaries ---------- */
+function summaryHTML(e) {
+  if (!e || !e.values) return '';
+  const vals = e.values, names = e.names || {};
+  const known = new Set(state.items.map(i => i.id));
+  const order = state.items.map(i => i.id).concat(Object.keys(vals).filter(k => !known.has(k)));
+  let tags = '', txt = '';
+  for (const id of order) {
+    const v = vals[id]; if (isEmptyVal(v)) continue;
+    const it = state.items.find(i => i.id === id) || state.retired.find(i => i.id === id);
+    const current = state.items.some(i => i.id === id);
+    const nm = current ? it.name : (names[id] || (it && it.name) || '（削除した項目）');
+    const isText = it ? it.type === 'text' : (typeof v === 'string' && v.length > 14);
+    if (isText) txt += `<div class="txt"><i>${esc(nm)}</i>${esc(v.length > 120 ? v.slice(0, 120) + '…' : v)}</div>`;
+    else if (it && it.type === 'scale' && isNum(v)) tags += `<span class="tag"><i>${esc(nm)}</i><span class="d" style="background:${colorAt(it, v)}"></span>${esc(scaleWord(it, v))}</span>`;
+    else tags += `<span class="tag"><i>${esc(nm)}</i>${esc([].concat(v).join('・'))}</span>`;
+  }
+  return (tags ? `<div class="sum">${tags}</div>` : '') + txt;
+}
+async function loadLookbacks(date) {
+  return Promise.all(LOOKBACKS.map(async lb => { const d = shift(date, lb); return {...lb, date: d, entry: await getEntry(d)}; }));
+}
+
+/* ---------- views ---------- */
+function backupDays() { return state.lastBackup ? Math.floor((Date.now() - new Date(state.lastBackup)) / 86400000) : null; }
+function backupBanner() {
+  const d = backupDays();
+  if (d === null && state.count >= 7) return `<div class="banner"><span>💾 まだ一度もバックアップしていません</span><button id="bk-now">今すぐ</button></div>`;
+  if (d !== null && d >= 30 && state.count > 0) return `<div class="banner"><span>💾 最後のバックアップから${d}日たちました</span><button id="bk-now">今すぐ</button></div>`;
+  return '';
+}
+function viewRecord() {
+  const e = state.entry || {values: {}};
+  const val = id => e.values ? e.values[id] : undefined;
+  const items = state.items;
+  let h = backupBanner();
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i], v = val(it.id);
+    const g = groupOf(it);
+    if (g) {
+      const members = [{it, sub: g.sub}];
+      while (i + 1 < items.length) { const n = groupOf(items[i + 1]); if (!n || n.g !== g.g) break; members.push({it: items[++i], sub: n.sub}); }
+      if (members.length > 1) {
+        const [le, lw] = splitLabel(it.left && it.left.label), [re, rw] = splitLabel(it.right && it.right.label);
+        h += `<section class="card sc-card"><div class="grp-h"><h3>${esc(g.g)}</h3><small>${esc(le)}${esc(lw)} ↔ ${esc(re)}${esc(rw)}</small></div>
+          <div class="grp" style="grid-template-columns:repeat(${members.length},minmax(0,1fr))">` +
+          members.map(m => scaleHTML(m.it, val(m.it.id), {label: m.sub, ends: false})).join('') + '</div></section>';
+        continue;
+      }
+    }
+    if (it.type === 'scale') { h += `<section class="card sc-card">${scaleHTML(it, v)}</section>`; continue; }
+    h += `<section class="card"><div class="card-h"><h3>${esc(it.name)}</h3>${!isEmptyVal(v) && it.type !== 'text' ? `<button class="clear" data-clear="${esc(it.id)}">クリア</button>` : ''}</div>`;
+    if (it.type === 'text') {
+      h += `<textarea data-text="${esc(it.id)}" rows="2" placeholder="自由に（空欄でもOK）">${esc(typeof v === 'string' ? v : '')}</textarea>`;
+    } else {
+      h += '<div class="chips">' + (it.options || []).map((o, i) => {
+        const on = it.type === 'multi' ? (Array.isArray(v) && v.includes(o)) : v === o;
+        return `<button class="chip${on ? ' on' : ''}" data-item="${esc(it.id)}" data-opt="${i}">${esc(o)}</button>`;
+      }).join('') + '</div>';
+    }
+    h += '</section>';
+  }
+  h += `<div id="peekwrap"></div>`;
+  return h;
+}
+async function fillPeek() {
+  const date = state.date;
+  const lbs = await loadLookbacks(date);
+  if (state.tab !== 'record' || state.date !== date) return;
+  const have = lbs.filter(l => l.entry && l.y);
+  const w = $('#peekwrap'); if (!w) return;
+  if (!have.length) { w.innerHTML = ''; return; }
+  w.innerHTML = `<div class="section-t">🕰️ 同じ日の記録</div><div class="peek">` +
+    have.map(l => `<button class="lb" data-go="${l.date}"><div class="lb-h"><b>${l.l}</b><span>${fmt(l.date)}</span></div>${summaryHTML(l.entry)}</button>`).join('') + '</div>';
+}
+
+function viewLook(lbs) {
+  let h = `<div class="section-t">${fmt(state.date)} から見た「あの日」</div>`;
+  for (const l of lbs) {
+    const has = !!l.entry;
+    h += `<button class="lb${has ? '' : ' empty'}" data-go="${l.date}"><div class="lb-h"><b>${l.l}</b><span>${fmt(l.date)}</span></div>${has ? summaryHTML(l.entry) : '<div class="txt" style="color:var(--sub)">記録なし</div>'}</button>`;
+  }
+  h += `<p class="note">カードをタップすると、その日の記録を開きます。上の ‹ › で基準の日を変えられます。</p>`;
+  return h;
+}
+
+async function viewCal() {
+  const [y, m] = state.calMonth.split('-').map(Number);
+  const first = new Date(y, m - 1, 1), days = new Date(y, m, 0).getDate();
+  const from = ymd(first), to = ymd(new Date(y, m - 1, days));
+  let rows = [];
+  try { rows = await store.range(from, to); } catch (e) {}
+  const map = {}; rows.forEach(r => { map[r.date] = r; state.cache[r.date] = r; });
+  const choiceItems = state.items.filter(i => i.type !== 'text');
+  if (!choiceItems.find(i => i.id === state.calItem)) state.calItem = choiceItems[0] ? choiceItems[0].id : '';
+  let h = `<div class="calbar"><button class="navbtn" data-cal="-1">‹</button><b>${y}年${m}月</b><button class="navbtn" data-cal="1">›</button></div>`;
+  h += `<div style="display:flex;justify-content:flex-end;align-items:center;gap:6px;margin-bottom:8px;font-size:13px;color:var(--sub)">表示：<select id="calitem">${choiceItems.map(i => `<option value="${esc(i.id)}"${i.id === state.calItem ? ' selected' : ''}>${esc(i.name)}</option>`).join('')}</select></div>`;
+  h += '<div class="grid">' + [...WD].map(w => `<div class="wd">${w}</div>`).join('');
+  for (let i = 0; i < first.getDay(); i++) h += '<div class="day blank"></div>';
+  const t = today();
+  for (let d = 1; d <= days; d++) {
+    const ds = `${y}-${pad(m)}-${pad(d)}`, e = map[ds];
+    const v = e && e.values ? e.values[state.calItem] : null;
+    const ci = choiceItems.find(i => i.id === state.calItem);
+    const mark = ci && ci.type === 'scale' && isNum(v) ? `<span class="cdot" style="background:${colorAt(ci, v)}"></span>`
+      : !isEmptyVal(v) && !isNum(v) ? `<span class="em">${esc([].concat(v).map(emojiOf).join(''))}</span>` : (e ? '<span class="dot"></span>' : '');
+    h += `<button class="day${ds === t ? ' today' : ''}${ds === state.date ? ' sel' : ''}" data-go="${ds}">${d}${mark}</button>`;
+  }
+  h += '</div><p class="note">日付をタップすると、その日の記録を開きます。</p>';
+  return h;
+}
+
+function viewItems() {
+  const n = state.items.length;
+  let h = `<div class="section-t">記録する項目（${n}）</div>`;
+  state.items.forEach((it, i) => {
+    const desc = it.type === 'text' ? '自由記載'
+      : it.type === 'scale' ? `スライダー：${(it.left && it.left.label) || ''} ↔ ${(it.right && it.right.label) || ''}`
+      : `${TYPE_LABEL[it.type]}：${(it.options || []).join(' / ')}`;
+    h += `<div class="item-row"><div class="nm"><b>${esc(it.name)}</b><small>${esc(desc)}</small></div>
+      <button class="ib" data-up="${i}" ${i === 0 ? 'disabled' : ''} aria-label="上へ">↑</button>
+      <button class="ib" data-down="${i}" ${i === n - 1 ? 'disabled' : ''} aria-label="下へ">↓</button>
+      <button class="ib" data-edit="${i}" aria-label="編集">✎</button></div>`;
+  });
+  h += `<button class="btn primary" id="additem">＋ 項目を追加</button>`;
+  h += `<p class="note">💡 スライダー項目は「天気（午前）」「天気（午後）」のように <b>名前（区分）</b> の形にして続けて並べると、記録画面で横並びの1枚にまとまります。</p>`;
+  h += `<div class="section-t">データ</div>`;
+  h += `<button class="btn primary" id="backup">💾 バックアップを作る（OneDriveへ保存）</button>`;
+  h += `<button class="btn" id="restore">📂 バックアップから復元</button>`;
+  h += `<p class="note">最終バックアップ：${state.lastBackup ? esc(fmt(ymd(new Date(state.lastBackup)))) : 'まだありません'}</p>`;
+  h += `<button class="btn" id="reset">項目を初期設定に戻す</button>`;
+  h += `<p class="note">記録はこのスマホの中だけに保存され、どこにも送信されません。スマホの故障・機種変更・ブラウザのデータ削除に備えて、月に1回ほどバックアップを作ってOneDriveに保存してください。<br>項目を削除しても、過去の記録は消えずに「あの日」で表示されます。</p>`;
+  return h;
+}
+
+/* ---------- render ---------- */
+function renderHeader() {
+  $('#hdate').textContent = fmt(state.date);
+  const rel = relLabel(state.date);
+  $('#hrel').innerHTML = rel === '今日' ? '今日' : `${esc(rel)}　<button class="todaybtn" id="gotoday">今日へ</button>`;
+  $('#picker').value = state.date;
+  document.querySelectorAll('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === state.tab));
+  const showDate = state.tab === 'record' || state.tab === 'look';
+  $('header').style.display = showDate ? '' : 'none';
+}
+let renderSeq = 0;
+async function render() {
+  renderHeader();
+  const v = $('#view'), seq = ++renderSeq;
+  if (!state.ready) { v.innerHTML = '<div class="loading">読み込み中…</div>'; return; }
+  if (state.tab === 'record') {
+    v.innerHTML = viewRecord();
+    v.querySelectorAll('textarea').forEach(autoGrow);
+    fillPeek();
+  } else if (state.tab === 'look') {
+    v.innerHTML = '<div class="loading">読み込み中…</div>';
+    const lbs = await loadLookbacks(state.date);
+    if (seq === renderSeq) v.innerHTML = viewLook(lbs);
+  } else if (state.tab === 'cal') {
+    const h = await viewCal();
+    if (seq === renderSeq) v.innerHTML = h;
+  } else {
+    v.innerHTML = viewItems();
+  }
+}
+function autoGrow(t) { t.style.height = 'auto'; t.style.height = Math.max(t.scrollHeight + 2, 48) + 'px'; }
+
+async function goDate(d) {
+  flush();
+  state.date = d;
+  state.entry = await getEntry(d);
+  if (state.date !== d) return;
+  render();
+  window.scrollTo(0, 0);
+}
+
+/* ---------- events ---------- */
+$('#prev').onclick = () => goDate(shift(state.date, {d: -1}));
+$('#next').onclick = () => goDate(shift(state.date, {d: 1}));
+$('#picker').onchange = e => { if (e.target.value) goDate(e.target.value); };
+$('#hrel').onclick = e => { if (e.target.id === 'gotoday') goDate(today()); };
+document.querySelectorAll('nav.tabs button').forEach(b => b.onclick = () => {
+  flush(); state.tab = b.dataset.tab;
+  if (state.tab === 'cal') state.calMonth = state.date.slice(0, 7);
+  render(); window.scrollTo(0, 0);
+});
+
+$('#view').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.item) {
+    const it = state.items.find(i => i.id === b.dataset.item); if (!it) return;
+    const opt = it.options[+b.dataset.opt];
+    const cur = state.entry && state.entry.values ? state.entry.values[it.id] : undefined;
+    let nv;
+    if (it.type === 'multi') { const arr = Array.isArray(cur) ? cur.slice() : []; const k = arr.indexOf(opt); k >= 0 ? arr.splice(k, 1) : arr.push(opt); nv = arr; }
+    else nv = cur === opt ? null : opt;
+    setValue(it.id, nv);
+    const card = b.closest('.card');
+    card.querySelectorAll('.chip').forEach((c, i) => {
+      const o = it.options[i]; c.classList.toggle('on', it.type === 'multi' ? nv.includes(o) : nv === o);
+    });
+    const h = card.querySelector('.card-h');
+    const cl = h.querySelector('.clear');
+    if (isEmptyVal(nv) && cl) cl.remove();
+    if (!isEmptyVal(nv) && !cl) h.insertAdjacentHTML('beforeend', `<button class="clear" data-clear="${esc(it.id)}">クリア</button>`);
+    scheduleSave(400);
+  } else if (b.dataset.clear) {
+    setValue(b.dataset.clear, null); scheduleSave(200);
+    const sw = b.closest('.scale'), it = state.items.find(i => i.id === b.dataset.clear);
+    if (sw) { if (it) updateScaleUI(sw, it, null); }
+    else { b.closest('.card').querySelectorAll('.chip').forEach(c => c.classList.remove('on')); b.remove(); }
+  } else if (b.dataset.go) {
+    state.tab = 'record'; goDate(b.dataset.go);
+  } else if (b.dataset.cal) {
+    const [y, m] = state.calMonth.split('-').map(Number);
+    state.calMonth = ymd(new Date(y, m - 1 + (+b.dataset.cal), 1)).slice(0, 7); render();
+  } else if (b.dataset.up || b.dataset.down) {
+    const i = +(b.dataset.up || b.dataset.down), j = b.dataset.up ? i - 1 : i + 1;
+    [state.items[i], state.items[j]] = [state.items[j], state.items[i]];
+    saveItems(); render();
+  } else if (b.dataset.edit) {
+    editItem(+b.dataset.edit);
+  } else if (b.id === 'additem') {
+    editItem(-1);
+  } else if (b.id === 'reset') {
+    confirmSheet('項目を初期設定に戻しますか？', '追加・変更した項目は初期の12項目に戻ります。これまでの記録は消えません。', '初期設定に戻す', () => {
+      state.items.forEach(retire); state.items = clone(DEFAULT_ITEMS); saveItems(); render(); toast('初期設定に戻しました');
+    });
+  } else if (b.id === 'restore') {
+    restoreFlow();
+  } else if (b.id === 'backup' || b.id === 'bk-now') {
+    backup();
+  }
+});
+$('#view').addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.text) { setValue(t.dataset.text, t.value.trim() ? t.value : null); autoGrow(t); scheduleSave(900); }
+});
+/* slider drag */
+$('#view').addEventListener('pointerdown', e => {
+  const tr = e.target.closest('.sc-track'); if (!tr) return;
+  const wrap = tr.closest('.scale'), it = state.items.find(i => i.id === wrap.dataset.scale); if (!it) return;
+  e.preventDefault();
+  try { tr.setPointerCapture(e.pointerId); } catch (err) {}
+  const upd = ev => {
+    const r = tr.getBoundingClientRect();
+    const v = Math.round(Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * 100);
+    setValue(it.id, v); updateScaleUI(wrap, it, v);
+  };
+  upd(e); setStatus('');
+  const up = () => { tr.removeEventListener('pointermove', upd); tr.removeEventListener('pointerup', up); tr.removeEventListener('pointercancel', up); scheduleSave(400); };
+  tr.addEventListener('pointermove', upd); tr.addEventListener('pointerup', up); tr.addEventListener('pointercancel', up);
+});
+$('#view').addEventListener('keydown', e => {
+  const tr = e.target.closest && e.target.closest('.sc-track'); if (!tr) return;
+  const d = {ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5}[e.key]; if (!d) return;
+  e.preventDefault();
+  const wrap = tr.closest('.scale'), it = state.items.find(i => i.id === wrap.dataset.scale); if (!it) return;
+  const cur = state.entry && state.entry.values && isNum(state.entry.values[it.id]) ? state.entry.values[it.id] : 50;
+  const v = Math.min(100, Math.max(0, cur + d)); setValue(it.id, v); updateScaleUI(wrap, it, v); scheduleSave(600);
+});
+$('#view').addEventListener('change', e => {
+  if (e.target.id === 'calitem') { state.calItem = e.target.value; render(); }
+});
+document.addEventListener('visibilitychange', () => { if (document.hidden) flush(); });
+window.addEventListener('pagehide', flush);
+
+/* ---------- items editing ---------- */
+function retire(it) {
+  if (!it || state.retired.some(r => r.id === it.id)) return;
+  state.retired.push(clone(it));
+}
+function saveItems() {
+  setStatus('保存中…');
+  store.saveSettings({items: state.items, retired: state.retired, version: SETTINGS_VERSION, updatedAt: new Date().toISOString()})
+    .then(() => setStatus('✓ 項目を保存しました', true))
+    .catch(() => { setStatus('保存できませんでした'); toast('項目の保存に失敗しました'); });
+}
+function openSheet(html) {
+  const m = $('#modal');
+  m.innerHTML = `<div class="mask"><div class="sheet">${html}</div></div>`;
+  m.querySelector('.mask').addEventListener('click', e => { if (e.target.classList.contains('mask')) closeSheet(); });
+  return m.querySelector('.sheet');
+}
+function closeSheet() { $('#modal').innerHTML = ''; }
+function confirmSheet(title, body, okLabel, onOk) {
+  const s = openSheet(`<h2>${esc(title)}</h2><p class="note" style="font-size:14px">${esc(body)}</p>
+    <div class="row2"><button class="btn" data-x>やめる</button><button class="btn primary" data-ok>${esc(okLabel)}</button></div>`);
+  s.querySelector('[data-x]').onclick = closeSheet;
+  s.querySelector('[data-ok]').onclick = () => { closeSheet(); onOk(); };
+}
+function editItem(idx) {
+  const isNew = idx < 0;
+  const it = isNew ? {id: 'i' + Date.now().toString(36), name: '', type: 'scale', options: []} : clone(state.items[idx]);
+  const sc = {
+    left: Object.assign({label: '', color: '#3f78d1'}, it.left),
+    mid: Object.assign({label: 'ふつう', color: '#a8a29e'}, it.mid),
+    right: Object.assign({label: '', color: '#f08a2c'}, it.right),
+  };
+  const scRow = (k, nm, ph) => `<span>${nm}</span><input type="color" id="f-${k}c" value="${safeColor(sc[k].color, '#a8a29e')}"><input type="text" id="f-${k}l" value="${esc(sc[k].label)}" placeholder="${ph}">`;
+  const s = openSheet(`<h2>${isNew ? '項目を追加' : '項目を編集'}</h2>
+    <label>項目名</label><input type="text" id="f-name" value="${esc(it.name)}" placeholder="例：睡眠、飲酒、読書">
+    <label>種類</label><div class="seg" id="f-type">${Object.entries(TYPE_LABEL).map(([k, v]) => `<button data-t="${k}" class="${it.type === k ? 'on' : ''}">${v}</button>`).join('')}</div>
+    <div id="f-optwrap"><label>選択肢（1行に1つ。先頭に絵文字＋スペースを付けるとカレンダーに表示されます）</label>
+    <textarea id="f-opts" rows="6" placeholder="😴 よく眠れた&#10;🙂 ふつう&#10;🥱 寝不足">${esc((it.options || []).join('\n'))}</textarea></div>
+    <div id="f-scwrap"><label>両端と中央の名前・色（左の四角をタップで色を変更）</label>
+      <div class="sc-edit">${scRow('left', '左端', '例：🥱 寝不足')}${scRow('mid', '中央', '例：🙂 ふつう')}${scRow('right', '右端', '例：😴 ぐっすり')}</div>
+      <label>プレビュー</label><div id="f-prev"></div></div>
+    <div class="row2" style="margin-top:14px"><button class="btn" data-x>キャンセル</button><button class="btn primary" data-save>保存</button></div>
+    ${isNew ? '' : '<button class="btn danger" data-del>この項目を削除</button>'}`);
+  const optWrap = s.querySelector('#f-optwrap');
+  const scWrap = s.querySelector('#f-scwrap');
+  const readSc = () => ['left', 'mid', 'right'].forEach(k => {
+    sc[k] = {label: s.querySelector(`#f-${k}l`).value.trim(), color: safeColor(s.querySelector(`#f-${k}c`).value, sc[k].color)};
+  });
+  const syncPrev = () => { readSc(); s.querySelector('#f-prev').style.background = gradient(sc); };
+  scWrap.addEventListener('input', syncPrev); syncPrev();
+  const syncType = () => {
+    optWrap.style.display = it.type === 'choice' || it.type === 'multi' ? '' : 'none';
+    scWrap.style.display = it.type === 'scale' ? '' : 'none';
+  };
+  syncType();
+  s.querySelectorAll('#f-type button').forEach(b => b.onclick = () => {
+    it.type = b.dataset.t; s.querySelectorAll('#f-type button').forEach(x => x.classList.toggle('on', x === b)); syncType();
+  });
+  s.querySelector('[data-x]').onclick = closeSheet;
+  s.querySelector('[data-save]').onclick = () => {
+    const name = s.querySelector('#f-name').value.trim();
+    const opts = [...new Set(s.querySelector('#f-opts').value.split('\n').map(x => x.trim()).filter(Boolean))];
+    if (!name) { toast('項目名を入れてください'); return; }
+    readSc();
+    if ((it.type === 'choice' || it.type === 'multi') && !opts.length) { toast('選択肢を1つ以上入れてください'); return; }
+    if (it.type === 'scale' && (!sc.left.label || !sc.right.label)) { toast('左端と右端の名前を入れてください'); return; }
+    it.name = name;
+    delete it.options; delete it.left; delete it.mid; delete it.right;
+    if (it.type === 'choice' || it.type === 'multi') it.options = opts;
+    if (it.type === 'scale') Object.assign(it, clone(sc));
+    if (isNew) state.items.push(it); else state.items[idx] = it;
+    closeSheet(); saveItems(); render(); toast(isNew ? '追加しました' : '更新しました');
+  };
+  const del = s.querySelector('[data-del]');
+  if (del) del.onclick = () => {
+    closeSheet();
+    confirmSheet(`「${it.name}」を削除しますか？`, '入力欄からは消えますが、過去に記録した内容は残ります。', '削除する', () => {
+      retire(state.items[idx]); state.items.splice(idx, 1); saveItems(); render(); toast('削除しました');
+    });
+  };
+}
+
+async function backup() {
+  let entries = [];
+  try { entries = await store.all(); } catch (e) { toast('読み込みに失敗しました'); return; }
+  entries.sort((a, b) => a.date < b.date ? -1 : 1);
+  const json = JSON.stringify({app: 'pochi-diary', format: 1, exportedAt: new Date().toISOString(), items: state.items, retired: state.retired, entries});
+  const name = `pochi-diary-backup-${today()}.json`;
+  const blob = new Blob([json], {type: 'application/json'});
+  let file = null; try { file = new File([blob], name, {type: 'application/json'}); } catch (e) {}
+  const canShare = !!(file && navigator.canShare && navigator.canShare({files: [file]}));
+  const kb = Math.max(1, Math.round(blob.size / 1024));
+  const s = openSheet(`<h2>バックアップ</h2>
+    <p class="note" style="font-size:14px">${entries.length}日分の記録（約${kb}KB）をファイルにします。</p>
+    ${canShare ? `<button class="btn primary" data-share>共有メニューから OneDrive に保存</button>
+    <ol class="steps"><li>上のボタンを押す</li><li>出てきたメニューで <b>OneDrive</b> を選ぶ（iPhoneで見つからない時は「"ファイル"に保存」→ OneDrive）</li><li>保存先フォルダ（例：日記バックアップ）を選んで保存</li></ol>` : ''}
+    <button class="btn${canShare ? '' : ' primary'}" data-dl>ファイルとしてダウンロード</button>
+    ${canShare ? '' : '<p class="note">ダウンロードしたファイルを、OneDrive アプリやエクスプローラーで OneDrive のフォルダに入れてください。</p>'}
+    <button class="btn" data-x>閉じる</button>`);
+  s.querySelector('[data-x]').onclick = closeSheet;
+  const done = async () => {
+    state.lastBackup = new Date().toISOString();
+    try { await store.setKV('lastBackup', state.lastBackup); } catch (e) {}
+    closeSheet(); render(); toast('バックアップしました');
+  };
+  const sh = s.querySelector('[data-share]');
+  if (sh) sh.onclick = async () => {
+    try { await navigator.share({files: [file], title: name}); done(); }
+    catch (e) { if (e && e.name !== 'AbortError') toast('共有できませんでした。ダウンロードをお試しください'); }
+  };
+  s.querySelector('[data-dl]').onclick = () => {
+    const url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    done();
+  };
+}
+
+function restoreFlow() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.json,application/json';
+  inp.onchange = async () => {
+    const f = inp.files && inp.files[0]; if (!f) return;
+    let data;
+    try { data = JSON.parse(await f.text()); } catch (e) { toast('ファイルを読み込めませんでした'); return; }
+    const list = Array.isArray(data && data.entries) ? data.entries.filter(e => e && typeof e.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(e.date) && e.values) : null;
+    if (!list) { toast('ぽちっと日記のバックアップではないようです'); return; }
+    const range = list.length ? `${fmt(list.reduce((a, e) => e.date < a ? e.date : a, list[0].date))} 〜 ${fmt(list.reduce((a, e) => e.date > a ? e.date : a, list[0].date))}` : '';
+    const s = openSheet(`<h2>バックアップから復元</h2>
+      <p class="note" style="font-size:14px">${esc(f.name)}<br>${list.length}日分 ${esc(range)}</p>
+      <button class="btn primary" data-merge>今の記録とまとめる（新しい方を残す）</button>
+      <button class="btn danger" data-replace>今の記録を消して置き換える</button>
+      <p class="note">機種変更などで新しいスマホに移すときは、どちらでも同じ結果になります。</p>
+      <button class="btn" data-x>キャンセル</button>`);
+    s.querySelector('[data-x]').onclick = closeSheet;
+    const finish = async () => {
+      state.cache = {}; state.count = (await store.all()).length;
+      state.entry = await getEntry(state.date); closeSheet(); render(); toast(`${list.length}日分を復元しました`);
+    };
+    s.querySelector('[data-merge]').onclick = async () => {
+      try {
+        const cur = {}; (await store.all()).forEach(e => { cur[e.date] = e; });
+        const take = list.filter(e => !cur[e.date] || (e.updatedAt || '') > (cur[e.date].updatedAt || ''));
+        await store.putMany(take, false);
+        if (Array.isArray(data.retired)) data.retired.forEach(retire);
+        await finish();
+      } catch (e) { toast('復元に失敗しました'); }
+    };
+    s.querySelector('[data-replace]').onclick = async () => {
+      try {
+        await store.putMany(list, true);
+        if (Array.isArray(data.items) && data.items.length) state.items = data.items;
+        state.retired = Array.isArray(data.retired) ? data.retired : [];
+        saveItems(); await finish();
+      } catch (e) { toast('復元に失敗しました'); }
+    };
+  };
+  inp.click();
+}
+
+/* ---------- init ---------- */
+(async function init() {
+  render();
+  try { idb = await openIDB(); } catch (e) { idb = null; }
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+  try {
+    const s = await store.getSettings();
+    if (s && Array.isArray(s.retired)) state.retired = s.retired;
+    if (s && Array.isArray(s.items) && s.items.length) state.items = s.items;
+  } catch (e) {}
+  try { state.lastBackup = (await store.getKV('lastBackup')) || null; } catch (e) {}
+  try { state.count = (await store.all()).length; } catch (e) {}
+  state.entry = await getEntry(state.date);
+  state.ready = true;
+  setStatus(idb ? '' : '⚠️ このブラウザでは保存が不安定です（プライベートモード？）');
+  render();
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>
