@@ -135,29 +135,28 @@ section.card textarea{padding:8px 10px}
 .banner button{border:none;background:var(--accent);color:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;flex:none}
 .steps{font-size:13px;line-height:1.8;margin:6px 0 0;padding-left:1.3em;color:var(--ink)}
 
-/* slider panel (icon rows) */
-.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:2px 10px 2px 6px;margin:10px 0}
-.prow{display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px dashed var(--line)}
-.prow:last-child{border-bottom:none}
-.pic{width:32px;height:32px;flex:none;font-size:21px;border:none;background:none;padding:0;border-radius:10px;line-height:1}
-.pic:active{background:var(--bg)}
-.pcells{flex:1;display:grid;gap:16px;min-width:0}
-.cell{display:flex;align-items:center;gap:3px;min-width:0}
-.sub{font-size:10px;color:var(--sub);font-weight:700;flex:none;min-width:12px;text-align:center;letter-spacing:-.02em}
-.trk{position:relative;flex:1;height:34px;touch-action:none;cursor:pointer;outline:none;min-width:0;margin:0 13px}
-.bar{position:absolute;left:-13px;right:-13px;top:50%;height:8px;margin-top:-4px;border-radius:999px}
-.unset .bar{opacity:.35}
-.end{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:12px;pointer-events:none;opacity:.8}
-.end.l{left:-6px}.end.r{left:calc(100% + 6px)}
-.cell:not(.unset) .end{opacity:.35}
-.th{position:absolute;top:50%;width:28px;height:28px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid #fff;
-  box-shadow:0 1px 4px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center}
-.te{font-size:16px;line-height:1}
-.unset .th{display:none}
-.bub{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);font-size:11px;padding:2px 8px;border-radius:999px;white-space:nowrap;display:none;pointer-events:none;z-index:10}
-.dragging .bub{display:block}
-.prow:first-child .bub{bottom:auto;top:32px}
-.trk:focus-visible .bar{box-shadow:0 0 0 3px var(--accent-soft)}
+/* vertical slider panel */
+.eqp{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:8px 8px 6px;margin:10px 0}
+.eqinfo{display:flex;align-items:center;gap:6px;justify-content:center;font-size:12px;color:var(--sub);min-height:20px;margin-bottom:4px}
+.eqinfo b{color:var(--ink)}
+.eqinfo .d{width:10px;height:10px;border-radius:50%}
+.eq{display:flex;gap:6px}
+.grpv{display:flex;flex-direction:column;min-width:0;background:var(--bg);border-radius:12px;padding:2px 2px 4px}
+.gt{font:inherit;font-size:13px;font-weight:700;color:var(--ink);text-align:center;border:none;background:none;padding:4px 0 2px;white-space:nowrap;border-radius:8px}
+.gt:active{background:var(--line)}
+.cols{display:flex;gap:2px}
+.vcell{flex:1 1 0;display:flex;flex-direction:column;align-items:center;min-width:0}
+.vend{font-size:13px;line-height:1;height:18px;display:flex;align-items:center}
+.vtrk{position:relative;width:100%;height:118px;margin:6px 0;touch-action:pan-y;cursor:pointer;outline:none}
+.vbar{position:absolute;top:-4px;bottom:-4px;left:50%;width:10px;margin-left:-5px;border-radius:999px;box-shadow:inset 0 1px 2px rgba(0,0,0,.15)}
+.unset .vbar{opacity:.35}
+.vth{position:absolute;left:50%;width:30px;height:30px;transform:translate(-50%,50%);border-radius:50%;border:2px solid #fff;
+  box-shadow:0 1px 5px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab;z-index:1}
+.dragging .vth{transform:translate(-50%,50%) scale(1.15);cursor:grabbing}
+.te{font-size:17px;line-height:1}
+.unset .vth{display:none}
+.vtrk:focus-visible .vbar{box-shadow:0 0 0 3px var(--accent-soft)}
+.vsub{font-size:10px;color:var(--sub);font-weight:700;white-space:nowrap;line-height:1.2}
 .dl{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
 .dl .d{width:12px;height:12px;border-radius:50%;border:1px solid var(--line);flex:none}
 .dl .w{flex:1;color:var(--sub)}
@@ -195,7 +194,7 @@ mark{background:#ffe08a;color:inherit;border-radius:3px;padding:0 1px}
 .grp .sc-val{font-size:11.5px;gap:0}
 .grp .sc-dot{display:none}
 .grp .clear.x{width:18px;height:18px;font-size:10px}
-#f-prev{height:12px;border-radius:999px}
+#f-prev{width:14px;height:90px;border-radius:999px;margin-left:8px}
 .tag .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:0}
 .day .cdot{width:20px;height:20px;border-radius:50%;margin-top:4px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)}
 .sc-edit{display:grid;grid-template-columns:auto 44px 1fr;gap:8px;align-items:center}
@@ -235,15 +234,14 @@ mark{background:#ffe08a;color:inherit;border-radius:3px;padding:0 1px}
 /* ---------- defaults ---------- */
 const WEATHER = {type:'scale', left:{label:'🌀 荒天', color:'#3f78d1'}, mid:{label:'⛅ くもり', color:'#a8a29e'}, right:{label:'☀️ 晴天', color:'#f08a2c'}};
 const TEMP = {type:'scale', left:{label:'🥶 寒い', color:'#2f7fd0'}, mid:{label:'😊 快適', color:'#a8a29e'}, right:{label:'🥵 暑い', color:'#e04a35'}};
-const SETTINGS_VERSION = 3;
+const SETTINGS_VERSION = 4;
 const DEFAULT_ITEMS = [
-  {id:'weather_am', name:'天気（午前）', icon:'🌤️', short:'AM', ...WEATHER},
-  {id:'weather_pm', name:'天気（午後）', icon:'🌤️', short:'PM', ...WEATHER},
+  {id:'weather_am', name:'天気（午前）', icon:'🌤️', short:'午前', ...WEATHER},
+  {id:'weather_pm', name:'天気（午後）', icon:'🌤️', short:'午後', ...WEATHER},
   {id:'temp_morning', name:'気温（朝）', icon:'🌡️', short:'朝', ...TEMP},
   {id:'temp_noon', name:'気温（昼）', icon:'🌡️', short:'昼', ...TEMP},
   {id:'temp_night', name:'気温（夜）', icon:'🌡️', short:'夜', ...TEMP},
-  {id:'mood', name:'調子（気分）', icon:'💓', short:'心', type:'scale', left:{label:'😞 最悪', color:'#6a6fb0'}, mid:{label:'😐 ふつう', color:'#a8a29e'}, right:{label:'😄 最高', color:'#f2b02e'}},
-  {id:'health', name:'調子（体調）', icon:'💓', short:'体', type:'scale', left:{label:'🤒 不調', color:'#9b6bb8'}, mid:{label:'😐 ふつう', color:'#a8a29e'}, right:{label:'💪 絶好調', color:'#3fae6a'}},
+  {id:'mood', name:'調子', type:'scale', left:{label:'😞 不調', color:'#6a6fb0'}, mid:{label:'😐 ふつう', color:'#a8a29e'}, right:{label:'😄 好調', color:'#f2b02e'}},
   {id:'family', name:'家族', icon:'👪', type:'scale', left:{label:'😟 心配', color:'#6a6fb0'}, mid:{label:'🙂 ふつう', color:'#a8a29e'}, right:{label:'😊 元気', color:'#f29a3a'}},
   {id:'work', name:'仕事', icon:'💼', type:'scale', left:{label:'🏖️ ゆとり', color:'#3aa8a0'}, mid:{label:'🙂 ふつう', color:'#a8a29e'}, right:{label:'🔥 大変', color:'#e04a35'}},
   {id:'exercise', name:'運動', icon:'👟', type:'scale', left:{label:'🛋️ なし', color:'#8c9bb0'}, mid:{label:'🚶 少し', color:'#a8a29e'}, right:{label:'🏃 しっかり', color:'#2fae5e'}},
@@ -255,6 +253,16 @@ const DEFAULT_ITEMS = [
 ];
 /* Upgrade saved item settings to v3 without touching any recorded data
    (records are keyed by item id, and ids never change). */
+/* v4: 調子 is one slider (the old 体調 is kept only for past records),
+   weather sub labels in Japanese. Records keep their ids, so nothing is lost. */
+function migrateV4(items) {
+  const def = Object.fromEntries(DEFAULT_ITEMS.map(i => [i.id, i]));
+  return items.filter(i => i.id !== 'health').map(i => {
+    if (i.id === 'mood') { const n = {...i, name: '調子', left: def.mood.left, mid: def.mood.mid, right: def.mood.right}; delete n.short; return n; }
+    if (i.id === 'weather_am' || i.id === 'weather_pm') return {...i, short: def[i.id].short};
+    return i;
+  });
+}
 function migrateV3(items) {
   const def = Object.fromEntries(DEFAULT_ITEMS.map(i => [i.id, i]));
   let out = items.filter(i => i.id !== 'news').map(i => {
@@ -324,22 +332,29 @@ const thumbEmoji = (it, v) => {
 const endEmoji = (it, k) => { const [e, w] = splitLabel(it[k] && it[k].label); return e || (w || '').slice(0, 1); };
 function cellHTML(it, v, sub) {
   const has = isNum(v);
-  return `<div class="cell${has ? '' : ' unset'}" data-scale="${esc(it.id)}">${sub ? `<span class="sub">${esc(sub)}</span>` : ''}
-    <div class="trk" role="slider" tabindex="0" aria-label="${esc(it.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${has ? v : 50}" aria-valuetext="${has ? esc(scaleWord(it, v)) : '未入力'}">
-      <div class="bar" style="background:${gradient(it)}"></div>
-      <span class="end l">${esc(endEmoji(it, 'left'))}</span><span class="end r">${esc(endEmoji(it, 'right'))}</span>
-      <div class="th" style="left:${has ? v : 50}%;background:${has ? colorAt(it, v) : 'transparent'}"><span class="te">${has ? esc(thumbEmoji(it, v)) : ''}</span><span class="bub">${has ? esc(scaleWord(it, v)) : ''}</span></div>
-    </div></div>`;
+  return `<div class="vcell${has ? '' : ' unset'}" data-scale="${esc(it.id)}">
+    <span class="vend">${esc(endEmoji(it, 'right'))}</span>
+    <div class="vtrk" role="slider" tabindex="0" aria-orientation="vertical" aria-label="${esc(it.name)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${has ? v : 50}" aria-valuetext="${has ? esc(scaleWord(it, v)) : '未入力'}">
+      <div class="vbar" style="background:${vgradient(it)}"></div>
+      <div class="vth" style="bottom:${has ? v : 50}%;background:${has ? colorAt(it, v) : 'transparent'}"><span class="te">${has ? esc(thumbEmoji(it, v)) : ''}</span></div>
+    </div>
+    <span class="vend">${esc(endEmoji(it, 'left'))}</span>
+    <span class="vsub">${sub ? esc(sub) : '&nbsp;'}</span></div>`;
 }
+const vgradient = it => { const [l, m, r] = stops(it); return `linear-gradient(0deg,${l},${m},${r})`; };
 function updateScaleUI(cell, it, v) {
   const has = isNum(v);
   cell.classList.toggle('unset', !has);
-  const th = cell.querySelector('.th');
-  th.style.left = (has ? v : 50) + '%'; th.style.background = has ? colorAt(it, v) : 'transparent';
+  const th = cell.querySelector('.vth');
+  th.style.bottom = (has ? v : 50) + '%'; th.style.background = has ? colorAt(it, v) : 'transparent';
   th.querySelector('.te').textContent = has ? thumbEmoji(it, v) : '';
-  th.querySelector('.bub').textContent = has ? scaleWord(it, v) : '';
-  const tr = cell.querySelector('.trk');
+  const tr = cell.querySelector('.vtrk');
   tr.setAttribute('aria-valuenow', has ? v : 50); tr.setAttribute('aria-valuetext', has ? scaleWord(it, v) : '未入力');
+}
+function showInfo(it, v) {
+  const el = $('#eqinfo'); if (!el) return;
+  el.innerHTML = isNum(v) ? `<span class="d" style="background:${colorAt(it, v)}"></span><b>${esc(it.name)}</b>　${esc(scaleWord(it, v))}`
+    : `<b>${esc(it.name)}</b>　未入力`;
 }
 /* "天気（午前）" + "天気（午後）" side by side → one card */
 const groupOf = it => { const m = it.type === 'scale' && /^(.+?)[（(](.+)[）)]$/.exec(it.name || ''); return m ? {g: m[1].trim(), sub: (it.short || m[2]).trim()} : null; };
@@ -407,7 +422,7 @@ const store = {
 /* ---------- state ---------- */
 const state = {
   ready: false, tab: 'record', date: today(), items: clone(DEFAULT_ITEMS),
-  entry: null, cache: {}, retired: [], q: '', count: 0, lastBackup: null, calMonth: today().slice(0, 7), calItem: 'mood',
+  entry: null, cache: {}, retired: [{id:'health', name:'体調', type:'scale', left:{label:'🤒 不調', color:'#9b6bb8'}, mid:{label:'😐 ふつう', color:'#a8a29e'}, right:{label:'💪 絶好調', color:'#3fae6a'}}], q: '', count: 0, lastBackup: null, calMonth: today().slice(0, 7), calItem: 'mood',
 };
 async function getEntry(date) {
   if (date in state.cache) return state.cache[date];
@@ -530,7 +545,11 @@ function viewRecord() {
   const val = id => e.values ? e.values[id] : undefined;
   const items = state.items;
   let h = backupBanner(), panel = '';
-  const closePanel = () => { if (panel) { h += `<section class="panel">${panel}</section>`; panel = ''; } };
+  const closePanel = () => {
+    if (!panel) return;
+    h += `<section class="panel eqp"><div class="eqinfo" id="eqinfo">バーをタップ、または ● を上下に動かして記録</div><div class="eq">${panel}</div></section>`;
+    panel = '';
+  };
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
     if (it.type === 'scale') {
@@ -538,8 +557,9 @@ function viewRecord() {
       if (g) while (i + 1 < items.length) { const n = groupOf(items[i + 1]); if (!n || n.g !== g.g) break; members.push({it: items[++i], sub: n.sub}); }
       const title = g && members.length > 1 ? g.g : it.name;
       if (members.length === 1) members[0].sub = '';
-      panel += `<div class="prow"><button class="pic" data-row="${esc(members.map(m => m.it.id).join(','))}" aria-label="${esc(title)}" title="${esc(title)}">${esc(iconOf(it))}</button>
-        <div class="pcells" style="grid-template-columns:repeat(${members.length},minmax(0,1fr))">${members.map(m => cellHTML(m.it, val(m.it.id), m.sub)).join('')}</div></div>`;
+      panel += `<div class="grpv${members.length > 1 ? ' multi' : ''}" style="flex:${members.length} 1 0">
+        <button class="gt" data-row="${esc(members.map(m => m.it.id).join(','))}">${esc(title)}</button>
+        <div class="cols">${members.map(m => cellHTML(m.it, val(m.it.id), m.sub)).join('')}</div></div>`;
       continue;
     }
     closePanel();
@@ -565,8 +585,8 @@ function rowSheet(ids) {
   const e = state.entry || {values: {}};
   const g = groupOf(its[0]);
   const title = g && its.length > 1 ? g.g : its[0].name;
-  const s = openSheet(`<h2>${esc(iconOf(its[0]))} ${esc(title)}</h2>
-    <p class="note">${esc(its[0].left.label)} ↔ ${esc(its[0].right.label)}</p>
+  const s = openSheet(`<h2>${esc(title)}</h2>
+    <p class="note">上：${esc(its[0].right.label)}　／　下：${esc(its[0].left.label)}</p>
     ${its.map(it => { const v = e.values ? e.values[it.id] : undefined, has = isNum(v);
       return `<div class="dl"><span class="d" style="background:${has ? colorAt(it, v) : 'transparent'}"></span><b>${esc(g && its.length > 1 ? (groupOf(it) || {}).sub : it.name)}</b><span class="w">${has ? esc(scaleWord(it, v)) : '未入力'}</span>${has ? `<button class="clear" data-c="${esc(it.id)}">クリア</button>` : ''}</div>`; }).join('')}
     <button class="btn" data-x style="margin-top:14px">閉じる</button>`);
@@ -574,7 +594,7 @@ function rowSheet(ids) {
   s.querySelectorAll('[data-c]').forEach(b => b.onclick = () => {
     const it = state.items.find(i => i.id === b.dataset.c);
     setValue(it.id, null); scheduleSave(200);
-    const cell = document.querySelector(`.cell[data-scale="${CSS.escape(it.id)}"]`); if (cell) updateScaleUI(cell, it, null);
+    const cell = document.querySelector(`.vcell[data-scale="${CSS.escape(it.id)}"]`); if (cell) updateScaleUI(cell, it, null);
     closeSheet(); toast(`${it.name}をクリアしました`);
   });
 }
@@ -754,32 +774,46 @@ $('#view').addEventListener('input', e => {
   if (t.id === 'q') { state.q = t.value; clearTimeout(searchTimer); searchTimer = setTimeout(runSearch, 250); return; }
   if (t.dataset && t.dataset.text) { setValue(t.dataset.text, t.value.trim() ? t.value : null); autoGrow(t); scheduleSave(900); }
 });
-/* slider drag */
+/* vertical sliders: tap the bar to set a value, drag the ● to adjust.
+   Swiping on the bar still scrolls the page, so scrolling never changes a value. */
+const posValue = (tr, y) => { const r = tr.getBoundingClientRect(); return Math.round(Math.min(1, Math.max(0, (r.bottom - y) / r.height)) * 100); };
+function cellCtx(el) {
+  const cell = el.closest('.vcell'); if (!cell) return null;
+  const it = state.items.find(i => i.id === cell.dataset.scale); if (!it) return null;
+  return {cell, it, tr: cell.querySelector('.vtrk')};
+}
+function applyV(c, v) { setValue(c.it.id, v); updateScaleUI(c.cell, c.it, v); showInfo(c.it, v); }
 $('#view').addEventListener('pointerdown', e => {
-  const tr = e.target.closest('.trk'); if (!tr) return;
-  const cell = tr.closest('.cell'), it = state.items.find(i => i.id === cell.dataset.scale); if (!it) return;
-  e.preventDefault();
-  try { tr.setPointerCapture(e.pointerId); } catch (err) {}
-  cell.classList.add('dragging');
-  const upd = ev => {
-    const r = tr.getBoundingClientRect();
-    const v = Math.round(Math.min(1, Math.max(0, (ev.clientX - r.left) / r.width)) * 100);
-    setValue(it.id, v); updateScaleUI(cell, it, v);
+  const thumb = e.target.closest('.vth');
+  const c = (thumb || e.target.closest('.vtrk')) && cellCtx(e.target); if (!c) return;
+  if (thumb) {
+    e.preventDefault();
+    try { thumb.setPointerCapture(e.pointerId); } catch (err) {}
+    c.cell.classList.add('dragging'); setStatus('');
+    const mv = ev => applyV(c, posValue(c.tr, ev.clientY));
+    const up = () => {
+      thumb.removeEventListener('pointermove', mv); thumb.removeEventListener('pointerup', up); thumb.removeEventListener('pointercancel', up);
+      c.cell.classList.remove('dragging'); scheduleSave(400);
+    };
+    thumb.addEventListener('pointermove', mv); thumb.addEventListener('pointerup', up); thumb.addEventListener('pointercancel', up);
+    return;
+  }
+  // a tap on the bar (not a scroll)
+  const x0 = e.clientX, y0 = e.clientY, tr = c.tr;
+  const up = ev => {
+    cleanup();
+    if (Math.abs(ev.clientX - x0) < 10 && Math.abs(ev.clientY - y0) < 10) { applyV(c, posValue(tr, ev.clientY)); setStatus(''); scheduleSave(400); }
   };
-  upd(e); setStatus('');
-  const up = () => {
-    tr.removeEventListener('pointermove', upd); tr.removeEventListener('pointerup', up); tr.removeEventListener('pointercancel', up);
-    setTimeout(() => cell.classList.remove('dragging'), 600); scheduleSave(400);
-  };
-  tr.addEventListener('pointermove', upd); tr.addEventListener('pointerup', up); tr.addEventListener('pointercancel', up);
+  const cleanup = () => { tr.removeEventListener('pointerup', up); tr.removeEventListener('pointercancel', cleanup); };
+  tr.addEventListener('pointerup', up); tr.addEventListener('pointercancel', cleanup);
 });
 $('#view').addEventListener('keydown', e => {
-  const tr = e.target.closest && e.target.closest('.trk'); if (!tr) return;
+  const tr = e.target.closest && e.target.closest('.vtrk'); if (!tr) return;
   const d = {ArrowLeft: -5, ArrowDown: -5, ArrowRight: 5, ArrowUp: 5}[e.key]; if (!d) return;
   e.preventDefault();
-  const cell = tr.closest('.cell'), it = state.items.find(i => i.id === cell.dataset.scale); if (!it) return;
-  const cur = state.entry && state.entry.values && isNum(state.entry.values[it.id]) ? state.entry.values[it.id] : 50;
-  const v = Math.min(100, Math.max(0, cur + d)); setValue(it.id, v); updateScaleUI(cell, it, v); scheduleSave(600);
+  const c = cellCtx(tr); if (!c) return;
+  const cur = state.entry && state.entry.values && isNum(state.entry.values[c.it.id]) ? state.entry.values[c.it.id] : 50;
+  applyV(c, Math.min(100, Math.max(0, cur + d))); scheduleSave(600);
 });
 $('#view').addEventListener('change', e => {
   if (e.target.id === 'calitem') { state.calItem = e.target.value; render(); }
@@ -825,11 +859,10 @@ function editItem(idx) {
     <label>種類</label><div class="seg" id="f-type">${Object.entries(TYPE_LABEL).map(([k, v]) => `<button data-t="${k}" class="${it.type === k ? 'on' : ''}">${v}</button>`).join('')}</div>
     <div id="f-optwrap"><label>選択肢（1行に1つ。先頭に絵文字＋スペースを付けるとカレンダーに表示されます）</label>
     <textarea id="f-opts" rows="6" placeholder="😴 よく眠れた&#10;🙂 ふつう&#10;🥱 寝不足">${esc((it.options || []).join('\n'))}</textarea></div>
-    <div id="f-scwrap"><label>両端と中央の名前・色（左の四角をタップで色を変更）</label>
-      <div class="sc-edit">${scRow('left', '左端', '例：🥱 寝不足')}${scRow('mid', '中央', '例：🙂 ふつう')}${scRow('right', '右端', '例：😴 ぐっすり')}</div>
+    <div id="f-scwrap"><label>上端・中央・下端の名前と色（四角をタップで色を変更）</label>
+      <div class="sc-edit">${scRow('right', '上端', '例：😴 ぐっすり')}${scRow('mid', '中央', '例：🙂 ふつう')}${scRow('left', '下端', '例：🥱 寝不足')}</div>
       <label>プレビュー</label><div id="f-prev"></div>
-      <div class="row2"><div style="flex:1"><label>アイコン（絵文字1つ）</label><input type="text" id="f-icon" value="${esc(it.icon || '')}" placeholder="例：😴"></div>
-      <div style="flex:1"><label>横並び時の短い表示</label><input type="text" id="f-short" value="${esc(it.short || '')}" placeholder="例：朝"></div></div></div>
+      <label>横並び時の短い表示（任意）</label><input type="text" id="f-short" value="${esc(it.short || '')}" placeholder="例：朝"></div>
     <div class="row2" style="margin-top:14px"><button class="btn" data-x>キャンセル</button><button class="btn primary" data-save>保存</button></div>
     ${isNew ? '' : '<button class="btn danger" data-del>この項目を削除</button>'}`);
   const optWrap = s.querySelector('#f-optwrap');
@@ -837,7 +870,7 @@ function editItem(idx) {
   const readSc = () => ['left', 'mid', 'right'].forEach(k => {
     sc[k] = {label: s.querySelector(`#f-${k}l`).value.trim(), color: safeColor(s.querySelector(`#f-${k}c`).value, sc[k].color)};
   });
-  const syncPrev = () => { readSc(); s.querySelector('#f-prev').style.background = gradient(sc); };
+  const syncPrev = () => { readSc(); s.querySelector('#f-prev').style.background = vgradient(sc); };
   scWrap.addEventListener('input', syncPrev); syncPrev();
   const syncType = () => {
     optWrap.style.display = it.type === 'choice' || it.type === 'multi' ? '' : 'none';
@@ -854,14 +887,13 @@ function editItem(idx) {
     if (!name) { toast('項目名を入れてください'); return; }
     readSc();
     if ((it.type === 'choice' || it.type === 'multi') && !opts.length) { toast('選択肢を1つ以上入れてください'); return; }
-    if (it.type === 'scale' && (!sc.left.label || !sc.right.label)) { toast('左端と右端の名前を入れてください'); return; }
+    if (it.type === 'scale' && (!sc.left.label || !sc.right.label)) { toast('上端と下端の名前を入れてください'); return; }
     it.name = name;
     delete it.options; delete it.left; delete it.mid; delete it.right;
     if (it.type === 'choice' || it.type === 'multi') it.options = opts;
     if (it.type === 'scale') {
       Object.assign(it, clone(sc));
-      const ic = s.querySelector('#f-icon').value.trim(), sh = s.querySelector('#f-short').value.trim();
-      if (ic) it.icon = ic; else delete it.icon;
+      const sh = s.querySelector('#f-short').value.trim();
       if (sh) it.short = sh; else delete it.short;
     }
     if (isNew) state.items.push(it); else state.items[idx] = it;
@@ -961,14 +993,19 @@ function restoreFlow() {
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
   try {
     const s = await store.getSettings();
-    if (s && Array.isArray(s.retired)) state.retired = s.retired;
+    if (s && Array.isArray(s.retired)) s.retired.forEach(x => { state.retired = state.retired.filter(y => y.id !== x.id); state.retired.push(x); });
     if (s && Array.isArray(s.items) && s.items.length) {
       state.items = s.items;
-      if ((s.version || 1) < 3) {
+      const ver = s.version || 1;
+      if (ver < 3) {
         const news = state.items.find(i => i.id === 'news'); if (news) retire(news);
         state.items = migrateV3(state.items);
-        saveItems();
       }
+      if (ver < 4) {
+        const hl = state.items.find(i => i.id === 'health'); if (hl) retire({...hl, name: '体調'});
+        state.items = migrateV4(state.items);
+      }
+      if (ver < SETTINGS_VERSION) saveItems();
     }
   } catch (e) {}
   try { state.lastBackup = (await store.getKV('lastBackup')) || null; } catch (e) {}
